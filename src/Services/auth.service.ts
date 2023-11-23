@@ -25,9 +25,6 @@ export default class AuthService {
     if (existingUser) {
       throw new BadRequestError(`Email ${payload.email} already in use`);
     }
-    if (existingUser) {
-      await this.authRepository.userExits(existingUser.id);
-    }
     const hashedPassword = await this.encrypt.bcrypt(payload.password);
     const user = await this.authRepository.create({
       email: payload.email,
@@ -93,7 +90,7 @@ export default class AuthService {
       return { id: user.id, tokenUser, refresh_token };
     }
 
-    refresh_token = crypto.randomBytes(40).toString('hex');
+    refresh_token = crypto.randomUUID();
     const userToken = {
       refresh_token,
       ip,
@@ -108,51 +105,50 @@ export default class AuthService {
     return { id: user.id, tokenUser, refresh_token };
   }
 
-  public async forgotPassword(email: string): Promise<void> {
-    if (!email) {
-      throw new BadRequestError('Please provide valid email');
-    }
-    const user = await this.authRepository.findByEmail(email);
-    if (user) {
-      const passwordToken = crypto.randomBytes(70).toString('hex');
-      const origin = 'http://localhost:3000';
-      await sendResetPasswordMail({
-        name: user.user_name,
-        email: user.email,
-        token: passwordToken,
-        origin,
-      });
-      const tenMInutes = 1000 * 60 * 10;
-      const passwordTokenExpirationDate = new Date(Date.now() + tenMInutes);
-      user.passwordToken = hashString(passwordToken);
-      user.passwordTokenExpirationDate = passwordTokenExpirationDate;
-      await this.authRepository.updateUser(user);
-    }
-  }
-  public async resetPasswordService(
-    email: string,
-    token: string,
-    password: string
-  ): Promise<void> {
-    const user = await this.authRepository.findByEmail(email);
+  // public async forgotPassword(email: string): Promise<void> {
+  //   if (!email) {
+  //     throw new BadRequestError('Please provide valid email');
+  //   }
+  //   const user = await this.authRepository.findByEmail(email);
+  //   if (user) {
+  //     const passwordToken = crypto.randomUUID();
+  //     const origin = 'http://localhost:3000';
+  //     await sendResetPasswordMail({
+  //       email: user.email,
+  //       token: passwordToken,
+  //       origin,
+  //     });
+  //     const tenMInutes = 1000 * 60 * 10;
+  //     const passwordTokenExpirationDate = new Date(Date.now() + tenMInutes);
+  //     user.passwordToken = hashString(passwordToken);
+  //     user.passwordTokenExpirationDate = passwordTokenExpirationDate;
+  //     await this.authRepository.updateUser(user);
+  //   }
+  // }
+  // public async resetPasswordService(
+  //   email: string,
+  //   token: string,
+  //   password: string
+  // ): Promise<void> {
+  //   const user = await this.authRepository.findByEmail(email);
 
-    if (!user) {
-      throw new BadRequestError('User not available');
-    }
+  //   if (!user) {
+  //     throw new BadRequestError('User not available');
+  //   }
 
-    const currentDate = new Date();
+  //   const currentDate = new Date();
 
-    if (
-      user.passwordToken === hashString(token) &&
-      user.passwordTokenExpirationDate != null &&
-      user.passwordTokenExpirationDate > currentDate
-    ) {
-      user.password = await bcrypt.hash(password, 10);
-      user.passwordToken = null;
-      user.passwordTokenExpirationDate = null;
-      await this.authRepository.updateUser(user);
-    }
-  }
+  //   if (
+  //     user.passwordToken === hashString(token) &&
+  //     user.passwordTokenExpirationDate != null &&
+  //     user.passwordTokenExpirationDate > currentDate
+  //   ) {
+  //     user.password = await bcrypt.hash(password, 10);
+  //     user.passwordToken = null;
+  //     user.passwordTokenExpirationDate = null;
+  //     await this.authRepository.updateUser(user);
+  //   }
+  // }
 
   public async logout(userId: number): Promise<void> {
     await this.tokenRepository.invalidateTokens(userId);
