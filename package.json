@@ -1,0 +1,49 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "An application that allows patients to describe their symptoms and receive preliminary medical advice from an AI-powered chatbot.",
+  "main": "index.js",
+  "scripts": {
+    "make-migration": "npx knex migrate:make pricing --knexfile ./src/Config/knexfile.ts --env development",
+    "migrate:up": "npx knex migrate:latest --knexfile ./src/Config/knexfile.ts --env development",
+    "migrate:down": "npx knex migrate:down --knexfile ./src/Config/knexfile.ts --env development",
+    "make-seed": "npx knex seed:make new-seed --knexfile ./src/Config/knexfile.ts --env development",
+    "seed": "npx knex seed:run --knexfile=./src/Config/knexfile.ts --env development",
+    "dev": "ts-node-dev --respawn --transpile-only server.ts "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Klusterthon-Group17/backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Klusterthon-Group17/backend/issues"
+  },
+  "homepage": "https://github.com/Klusterthon-Group17/backend#readme",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.6",
+    "@types/express": "^4.17.21",
+    "@types/nodemailer": "^6.4.14",
+    "@types/pino": "^7.0.5",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "http-status-codes": "^2.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.0.1",
+    "nodemailer": "^6.9.7",
+    "objection": "^3.1.2",
+    "pg": "^8.11.3",
+    "pino": "^8.16.2",
+    "pino-pretty": "^10.2.3"
+  }
+}
