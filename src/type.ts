@@ -6,5 +6,6 @@ type UserId = number & MaybeCompositeId;
 type  RegisterInterface = {
     email:string, 
     password: string,
+    confirmPassword: string
     }
 export {PartialUser, UserId, RegisterInterface};

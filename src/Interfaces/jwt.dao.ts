@@ -1,8 +1,7 @@
 import { Response } from 'express';
 import IUser from './user.type';
-import { IToken } from './token.interface';
 import User from '../Models/user.model';
-import Token from '../Models/token.model';
+
 export interface jwtToken {
     user_id : number,
     lat: number,
@@ -27,7 +26,7 @@ export interface AttachCookiesToResponse  {
 
   export interface UserObject {
     id: number;
-    user_name: string;
+    email: string;
   }
   export interface CreateJWTPayload {
       id: number;

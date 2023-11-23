@@ -28,7 +28,6 @@ export default class AuthService {
     if (existingUser) {
       await this.authRepository.userExits(existingUser.id);
     }
-    const verificationToken = crypto.randomBytes(40).toString('hex');
     const hashedPassword = await this.encrypt.bcrypt(payload.password);
     const user = await this.authRepository.create({
       email: payload.email,
@@ -36,7 +35,6 @@ export default class AuthService {
     });
     await sendVerificationMail({
       email: user.email,
-      verificationCode: user.verificationToken,
     });
     return user;
   }
