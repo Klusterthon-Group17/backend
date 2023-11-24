@@ -27,7 +27,6 @@ export interface ILoginResponse {
 export interface ILoginRequest {
   email: string;
   password: string
-  ip: string;
   userAgent: string;
 }
 

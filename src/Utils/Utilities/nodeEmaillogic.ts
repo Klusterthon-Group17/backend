@@ -50,12 +50,9 @@ const sendVerificationMail = async ({
 
 const sendResetPasswordMail = async ({
   email,
-  origin,
-  verificationCode,
 }: {
   email: string;
-  verificationCode: string;
-  origin: string;
+
 }): Promise<SentMessageInfo> => {
   const resetURL = `${origin}/auth/verifyEmail?email=${email}`;
   const message = `<p>Please reset password by clicking on the following link : 

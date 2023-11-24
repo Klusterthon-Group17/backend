@@ -1,7 +1,7 @@
 import { Router } from "express";
 import AuthController from "../../Controller/AuthController";
-import { authenticateUser } from "../../Utils/Middleware/authentication";
-import { authenticateLogout } from "../../Utils/Middleware/authMiddleware";
+// import { authenticateUser } from "../../Utils/Middleware/authentication";
+// import { authenticateLogout } from "../../Utils/Middleware/authMiddleware";
 import {registerValidationTerms, loginValidationTerms } from "../../Utils/ValidationUtil/user.validation";
 const authController = new AuthController();
 const authRouter = Router();

@@ -66,7 +66,6 @@ export default class AuthController {
       const { tokenUser, refresh_token } = await this.authService.login({
         email,
         password,
-        ip: req.ip,
         userAgent: req.headers['user-agent'] ?? '',
       });
 
