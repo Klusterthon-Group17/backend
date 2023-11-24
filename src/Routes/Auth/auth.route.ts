@@ -1,5 +1,5 @@
 import { Router } from "express";
-import AuthController from "../../Controllers/auth.controller";
+import AuthController from "../../Controller/AuthController";
 import { authenticateUser } from "../../Utils/Middleware/authentication";
 import { authenticateLogout } from "../../Utils/Middleware/authMiddleware";
 import {registerValidationTerms, loginValidationTerms } from "../../Utils/ValidationUtil/user.validation";
