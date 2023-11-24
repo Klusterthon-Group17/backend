@@ -32,6 +32,6 @@ app.get('/api/v1', (req, res) => {
 // Socket.IO setup
 socketService(io);
 
-httpServer.listen(port, () => {
+app.listen(port, () => {
   return console.log(`Server is listening at http://localhost:${port}`);
 });
