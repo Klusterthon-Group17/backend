@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 
 export const openAI = {
   async generateMedicalResponse(prompt: string): Promise<string> {
-    const API_KEY = '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';
+    const API_KEY = process.env.API_KEY;
     const OPENAI_API_MEDICAL_ENDPOINT =
       'https://api.openai.com/v1/engines/davinci/medical/completions';
 
