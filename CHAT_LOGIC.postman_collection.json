@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "369c0125-f22d-451a-9a3e-4b3baf2d108b",
+		"name": "CHAT_LOGIC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23971986"
+	},
+	"item": [
+		{
+			"name": "AUTH",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"erna.kreiger12@ethereal.email\",\r\n    \"password\" : \"link3456\",\r\n    \"confirmPassword\" : \"link3456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify EMAIL",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"erna.kreiger12@ethereal.email\",\r\n    \"verificationToken\" : \"72379\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/verifyEmail",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"verifyEmail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"erna.kreiger12@ethereal.email\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/forgotPassword",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"forgotPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"token\": \"0a86051fcf22b777c2cc5e9956ec38b1\",\r\n    \"email\": \"erna.kreiger12@ethereal.email\",\r\n     \"password\" : \"link3451\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/resetPassword",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"resetPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"erna.kreiger12@ethereal.email\",\r\n     \"password\" : \"link3456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CHAT",
+			"item": []
+		},
+		{
+			"name": "Get Base API",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/api/v1",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
