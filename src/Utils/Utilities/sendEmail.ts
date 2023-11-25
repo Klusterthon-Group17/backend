@@ -4,7 +4,12 @@ import nodemailerConfig from './nodeMailerEmail';
 const sendNodeEmail = async  (to: string, subject: string, html: string)=> {
     let testAccount = await nodemailer.createTestAccount();
 
-    const transporter = nodemailer.createTransport(nodemailerConfig);
+    const transporter = nodemailer.createTransport({
+      ...nodemailerConfig,
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
 
     return transporter.sendMail({
         from: '"Cooler 👻" <foo@gmail.com>', // sender address

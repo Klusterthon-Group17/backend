@@ -20,12 +20,13 @@ export default class AuthController {
       email: req.body.email,
       password: req.body.password,
       confirmPassword: req.body.confirmPassword,
+      verificationToken: '',
     };
     try {
       const user = await this.authService.register(registerData);
-       if (registerData.password !== registerData.confirmPassword) {
-         return res.status(400).json({ error: 'Passwords do not match' });
-       }
+      if (registerData.password !== registerData.confirmPassword) {
+        return res.status(400).json({ error: 'Passwords do not match' });
+      }
       logger.info({ user });
       res
         .status(StatusCodes.ACCEPTED)
@@ -48,24 +49,22 @@ export default class AuthController {
     } catch (error) {
       logger.error(error);
       if (error) {
-        return res
-          .status(StatusCodes.UNAUTHORIZED)
-          .json({
-            message:
-              'Email verification Failed. Please check your inbox for a verification email and follow the instructions to verify your account.',
-            error,
-          });
+        return res.status(StatusCodes.UNAUTHORIZED).json({
+          message:
+            'Email verification Failed. Please check your inbox for a verification email and follow the instructions to verify your account.',
+          error,
+        });
       }
     }
   }
 
   public async authenticate(req: Request, res: Response) {
     const { email, password } = req.body;
-
     try {
       const { tokenUser, refresh_token } = await this.authService.login({
         email,
         password,
+        ip: req.ip || '',
         userAgent: req.headers['user-agent'] ?? '',
       });
 
@@ -85,26 +84,23 @@ export default class AuthController {
       }
     }
   }
+
   public async forgotPassword(req: Request, res: Response) {
     try {
       const { email } = req.body;
       const resetToken = await this.authService.forgotPassword(email);
       logger.info(resetToken);
-      res
-        .status(200)
-        .json({
-          msg: 'Please check your email for reset password link',
-          resetToken,
-        });
+      res.status(200).json({
+        msg: 'Please check your email for reset password link',
+        resetToken,
+      });
     } catch (error: any) {
       log.error(error);
-      return res
-        .status(StatusCodes.UNAUTHORIZED)
-        .json({
-          message:
-            'Email not found. Please make sure you entered the correct email address.',
-          error,
-        });
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+        message:
+          'Email not found. Please make sure you entered the correct email address.',
+        error,
+      });
     }
   }
 
@@ -125,13 +121,11 @@ export default class AuthController {
           .status(StatusCodes.BAD_REQUEST)
           .json({ message: 'Please provide all values', error });
       } else if (error) {
-        return res
-          .status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .json({
-            message:
-              'An error occurred while resetting the password. Please try again later.',
-            error,
-          });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message:
+            'An error occurred while resetting the password. Please try again later.',
+          error,
+        });
       }
     }
   }

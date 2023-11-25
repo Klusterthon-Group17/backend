@@ -6,6 +6,7 @@ export default interface IUser{
     id: number;    
     email: string;
     password : string;
+    verificationToken: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -26,7 +27,8 @@ export interface ILoginResponse {
 
 export interface ILoginRequest {
   email: string;
-  password: string
+  password: string;
+  ip: string;
   userAgent: string;
 }
 

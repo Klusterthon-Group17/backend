@@ -9,7 +9,7 @@ export default class AuthRepository {
    }
 
    async saveUser(isVerified : boolean, verified: Date, email : string) : Promise<void> {
-    await User.query().patch({isVerified, verified, verificationCode: ""}).where({email});
+    await User.query().patch({isVerified, verified, verificationToken: ""}).where({email});
   
    }
    async create(user: PartialUser): Promise<IUser>{

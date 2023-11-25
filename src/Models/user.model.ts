@@ -5,9 +5,12 @@ export default class User extends Model {
   id!: number;
   email!: string;
   password!: string;
-  verificationCode!: string;
+  verificationToken!: string;
   isVerified!: boolean;
   verified!: Date;
+  token!: string;
+  passwordToken?: string | null;
+  passwordTokenExpirationDate?: Date | null;
   createdAt!: Date;
   updatedAt!: Date;
 }

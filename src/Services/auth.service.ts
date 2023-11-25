@@ -1,19 +1,27 @@
-
-import bcrypt from 'bcrypt'
+import crypto from 'crypto';
+import bcrypt from 'bcrypt';
+import { generateCode } from './generate.code';
 import Encrypt from '../Utils/bcrypt.encrypt';
-import { RegisterInterface} from '../type';
-import IUser, {  ILoginRequest, ILoginResponse } from '../Interfaces/user.type';
+import { RegisterInterface } from '../type';
+import IUser, {
+  ICreateTokenUser,
+  ILoginRequest,
+  ILoginResponse,
+} from '../Interfaces/user.type';
 import AuthRepository from '../Repositories/auth.repository';
 import {
-    BadRequestError, 
-    NotFoundError, 
-    UnAuthenticatedError
-} from "../Utils/ErrorUtils";
+  BadRequestError,
+  NotFoundError,
+  UnAuthenticatedError,
+} from '../Utils/ErrorUtils';
 import { createTokenUser } from '../Utils/Middleware/createToken.user';
-import sendResetPasswordEmail from '../Utils/Utilities/resetPasswordEmail';
-import hashString from '../Utils/Utilities/createHash';
-import { sendResetPasswordMail, sendVerificationMail } from '../Utils/Utilities/nodeEmaillogic';
 import { TokenRepository } from '../Repositories/token.repository';
+// import sendResetPasswordEmail from '../Utils/Utilities/resetPasswordEmail';
+import hashString from '../Utils/Utilities/createHash';
+import {
+  sendResetPasswordMail,
+  sendVerificationMail,
+} from '../Utils/Utilities/nodeEmaillogic';
 
 export default class AuthService {
   private authRepository = new AuthRepository();
@@ -25,13 +33,17 @@ export default class AuthService {
     if (existingUser) {
       throw new BadRequestError(`Email ${payload.email} already in use`);
     }
+    const verificationToken = generateCode();
     const hashedPassword = await this.encrypt.bcrypt(payload.password);
     const user = await this.authRepository.create({
       email: payload.email,
       password: hashedPassword,
+      verificationToken: verificationToken,
     });
+    const origin = 'http://localhost:3000';
     await sendVerificationMail({
       email: user.email,
+      verificationToken: user.verificationToken,
     });
     return user;
   }
@@ -46,12 +58,12 @@ export default class AuthService {
         `Verification Failed for user with ${email}`
       );
     }
-    if (user.verificationCode !== verificationToken) {
+    if (user.verificationToken !== verificationToken) {
       throw new UnAuthenticatedError('Verification Failed');
     }
     user.verified = new Date();
     user.isVerified = true;
-    user.verificationCode = '';
+    user.verificationToken = '';
     await this.authRepository.saveUser(
       user.isVerified,
       user.verified,
@@ -60,7 +72,7 @@ export default class AuthService {
   }
 
   public async login(loginRequest: ILoginRequest): Promise<ILoginResponse> {
-    const { email, password,  userAgent } = loginRequest;
+    const { email, password, ip, userAgent } = loginRequest;
     const user = await this.authRepository.findByEmail(email);
     if (!user) {
       throw new BadRequestError('Invalid email or password');
@@ -90,9 +102,10 @@ export default class AuthService {
       return { id: user.id, tokenUser, refresh_token };
     }
 
-    refresh_token = crypto.randomUUID();
+    refresh_token = crypto.randomBytes(40).toString('hex');
     const userToken = {
       refresh_token,
+      ip,
       userAgent,
       isValid: true,
       userId: user.id,
@@ -110,14 +123,17 @@ export default class AuthService {
     }
     const user = await this.authRepository.findByEmail(email);
     if (user) {
-      const passwordToken = crypto.randomUUID();
+      const passwordToken = generateCode();
       const origin = 'http://localhost:3000';
       await sendResetPasswordMail({
         email: user.email,
-       
+        token: passwordToken,
+        origin,
       });
       const tenMInutes = 1000 * 60 * 10;
       const passwordTokenExpirationDate = new Date(Date.now() + tenMInutes);
+      user.passwordToken = hashString(passwordToken);
+      user.passwordTokenExpirationDate = passwordTokenExpirationDate;
       await this.authRepository.updateUser(user);
     }
   }
@@ -134,9 +150,17 @@ export default class AuthService {
 
     const currentDate = new Date();
 
-  
+    if (
+      user.passwordToken === hashString(token) &&
+      user.passwordTokenExpirationDate != null &&
+      user.passwordTokenExpirationDate > currentDate
+    ) {
+      user.password = await bcrypt.hash(password, 10);
+      user.passwordToken = null;
+      user.passwordTokenExpirationDate = null;
       await this.authRepository.updateUser(user);
     }
+  }
 
   public async logout(userId: number): Promise<void> {
     await this.tokenRepository.invalidateTokens(userId);

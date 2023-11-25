@@ -12,21 +12,17 @@ const getUsernameFromEmail = (email: string): string => {
   return 'User';
 };
 
-const generateVerificationCode = (): string => {
-  return Math.floor(10000 + Math.random() * 90000).toString();
-};
-
 const sendVerificationMail = async ({
   email,
+  verificationToken,
 }: {
   email: string;
+  verificationToken: string;
 }): Promise<SentMessageInfo> => {
-  const verificationCode = generateVerificationCode();
-
   // Extract user name from the email
   const userName = getUsernameFromEmail(email);
 
-  const message = `<p>Hello ${userName}, your verification code is: ${verificationCode}</p>`;
+  const message = `<p>Hello ${userName}, your verification code is: ${verificationToken}</p>`;
 
   const emaildata: emailData = {
     to: email,
@@ -38,30 +34,32 @@ const sendVerificationMail = async ({
     text: 'Email Verification',
   };
 
-
   const result = await sendNodeEmail(
     emaildata.to,
     emaildata.subject,
     emaildata.html
   );
 
-  return { ...result, verificationCode };
+  return { ...result, verificationToken };
 };
 
 const sendResetPasswordMail = async ({
   email,
+  token,
+  origin,
 }: {
   email: string;
-
+  token: string;
+  origin: string;
 }): Promise<SentMessageInfo> => {
-  const resetURL = `${origin}/auth/verifyEmail?email=${email}`;
+  const resetURL = `${origin}/user/reset-password?token=${token}&email=${email}`;
   const message = `<p>Please reset password by clicking on the following link : 
     <a href="${resetURL}">Reset Password</a></p>`;
 
   const emaildata: emailData = {
     to: email,
     subject: 'Email Confirmation',
-    html: `<h4> Hello, ${name}</h4>
+    html: `<h4> Hello</h4>
           ${message}
           `,
     from: '',
